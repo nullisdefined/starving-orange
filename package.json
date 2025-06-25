@@ -1,6 +1,6 @@
 {
   "name": "starving-orange",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "Random nickname generator combining Korean adjectives and fruits",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
