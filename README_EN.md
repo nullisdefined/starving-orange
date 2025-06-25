@@ -1,3 +1,4 @@
+![starving-orange-logo](https://github.com/user-attachments/assets/f02d97b3-fb3d-400c-bcdf-6911a0581229)
 # starving-orange · ![MIT License](https://img.shields.io/badge/License-MIT-yellow.svg) ![NPM badge](https://badge.fury.io/js/starving-orange.svg)
 
 [한국어](README.md) | **English**
