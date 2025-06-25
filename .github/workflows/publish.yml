@@ -3,8 +3,6 @@ name: Publish to npm
 on:
   push:
     tags:
-      - "v*"
-      - "[0-9]+.[0-9]+.[0-9]+"
       - "starving-orange@*"
 
 jobs:

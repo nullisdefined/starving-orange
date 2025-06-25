@@ -13,9 +13,9 @@
     "dev": "rollup -c -w",
     "test": "jest",
     "prepublishOnly": "npm run build",
-    "release:patch": "npm version patch && git tag starving-orange@$(node -p \"require('./package.json').version\") && git push origin main --tags",
-    "release:minor": "npm version minor && git tag starving-orange@$(node -p \"require('./package.json').version\") && git push origin main --tags",
-    "release:major": "npm version major && git tag starving-orange@$(node -p \"require('./package.json').version\") && git push origin main --tags"
+    "release:patch": "npm version patch --no-git-tag-version && git add package.json && git commit -m \"bump version to $(node -p \\\"require('./package.json').version\\\")\" && git tag starving-orange@$(node -p \"require('./package.json').version\") && git push origin main --tags",
+    "release:minor": "npm version minor --no-git-tag-version && git add package.json && git commit -m \"bump version to $(node -p \\\"require('./package.json').version\\\")\" && git tag starving-orange@$(node -p \"require('./package.json').version\") && git push origin main --tags",
+    "release:major": "npm version major --no-git-tag-version && git add package.json && git commit -m \"bump version to $(node -p \\\"require('./package.json').version\\\")\" && git tag starving-orange@$(node -p \"require('./package.json').version\") && git push origin main --tags"
   },
   "keywords": [
     "korean",
