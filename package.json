@@ -1,7 +1,7 @@
 {
   "name": "starving-orange",
   "version": "1.1.0",
-  "description": "한글 형용사와 과일을 조합한 랜덤 닉네임 생성기",
+  "description": "Random nickname generator combining Korean adjectives and fruits",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
