@@ -1,0 +1,46 @@
+{
+  "name": "starving-orange",
+  "version": "1.0.0",
+  "description": "한글 형용사와 과일을 조합한 랜덤 닉네임 생성기",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w",
+    "test": "jest",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "korean",
+    "nickname",
+    "generator",
+    "random",
+    "hangul",
+    "korean-names",
+    "fruit",
+    "adjective"
+  ],
+  "author": "nullisdefined",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/starving-orange.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/starving-orange/issues"
+  },
+  "homepage": "https://github.com/yourusername/starving-orange#readme",
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^11.1.5",
+    "@types/jest": "^29.5.8",
+    "jest": "^29.7.0",
+    "rollup": "^4.6.1",
+    "ts-jest": "^29.1.1",
+    "tslib": "^2.6.2",
+    "typescript": "^5.2.2"
+  }
+} 
