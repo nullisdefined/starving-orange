@@ -13,7 +13,7 @@ You can easily generate unique nicknames by combining adjectives and nouns (frui
 import { generateNickname } from 'starving-orange';
 
 const nickname = generateNickname();
-console.log(nickname.nickname); // '배고픈 귤' (Hungry Tangerine)
+console.log(nickname.nickname); // '배고픈귤' (HungryTangerine) - default: no spacing
 console.log(nickname.adjective); // '배고픈' (Hungry)
 console.log(nickname.noun); // '귤' (Tangerine)
 
@@ -29,11 +29,11 @@ const candidates = generateMultipleNicknames(5);
 candidates.forEach(result => {
   console.log(result.nickname);
 });
-// '용감한 거봉' (Brave Kyoho Grape)
-// '상냥한 한라봉' (Kind Hallabong)
-// '용감한 두리안' (Brave Durian)
-// '달콤한 코코넛' (Sweet Coconut)
-// '친절한 브로콜리' (Friendly Broccoli)
+// '용감한거봉' (BraveKyohoGrape)
+// '상냥한한라봉' (KindHallabong)
+// '용감한두리안' (BraveDurian)
+// '달콤한코코넛' (SweetCoconut)
+// '친절한브로콜리' (FriendlyBroccoli)
 ```
 
 ```typescript
@@ -45,18 +45,18 @@ const customNickname = generateNickname({
   customNouns: ['바나나', '오렌지', '토마토', '상추'] // ['Banana', 'Orange', 'Tomato', 'Lettuce']
 });
 
-console.log(customNickname.nickname); // '꿀꿀한 상추' (Adorable Lettuce)
+console.log(customNickname.nickname); // '꿀꿀한상추' (AdorableLettuce)
 ```
 
 ```typescript
 import { generateNickname } from 'starving-orange';
 
-// Generate nicknames without spacing
-const noSpaceNickname = generateNickname({ noSpacing: true });
+// Default (no spacing)
+const noSpaceNickname = generateNickname();
 console.log(noSpaceNickname.nickname); // '배고픈귤' (HungryTangerine)
 
-// Default (with spacing)
-const spaceNickname = generateNickname();
+// Generate nicknames with spacing
+const spaceNickname = generateNickname({ noSpacing: false });
 console.log(spaceNickname.nickname); // '배고픈 귤' (Hungry Tangerine)
 ```
 
@@ -81,7 +81,7 @@ interface NicknameOptions {
   customAdjectives?: string[]; // Array of adjectives to use
   customNouns?: string[];      // Array of nouns to use
   seed?: number;               // Seed for reproducible random generation
-  noSpacing?: boolean;         // Generate nickname without spacing (default: false)
+  noSpacing?: boolean;         // Generate nickname without spacing (default: true)
 }
 
 interface GenerateResult {
@@ -93,7 +93,16 @@ interface GenerateResult {
 
 ### `generateMultipleNicknames(count, options?)`
 
-Generates multiple nicknames at once.
+Generates multiple nicknames at once. By default, `unique: true` prevents duplicates **within this call's results**, including duplicate custom words and combinations producing the same nickname string. Requests exceeding the available unique nicknames throw an error. `count` must be a positive safe integer.
+
+```typescript
+generateMultipleNicknames(5); // Five unique nicknames
+generateMultipleNicknames(5, { unique: false }); // Allow duplicates
+```
+
+The options type is `MultipleNicknameOptions`, extending `NicknameOptions` with `unique?: boolean`. The same seed reproduces the same results. Separate calls and `generateNickname()` do not track previous results; enforce service-wide uniqueness in your storage layer.
+
+Unique generation builds all combinations before random selection, so large custom word lists require memory and preparation time proportional to the combination count. `getTotalCombinations()` returns the product of the word array lengths; duplicate words or identical output strings can make the actual unique count smaller.
 
 ### `getAvailableAdjectives()` / `getAvailableNouns()`
 
@@ -109,4 +118,4 @@ Returns the total number of possible nickname combinations.
 
 ## License
 
-[MIT LICENSE](LICENSE) 
+[MIT LICENSE](LICENSE)
