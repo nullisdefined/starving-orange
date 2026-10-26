@@ -11,7 +11,7 @@ export interface NicknameOptions {
   customNouns?: string[];
   /** 시드 값 (재현 가능한 랜덤 생성을 위해) */
   seed?: number;
-  /** 띄어쓰기 없이 닉네임 생성 (기본값: false) */
+  /** 띄어쓰기 없이 닉네임 생성 (기본값: true) */
   noSpacing?: boolean;
 }
 
@@ -22,6 +22,11 @@ export interface GenerateResult {
   adjective: string;
   /** 사용된 명사 */
   noun: string;
+}
+
+export interface MultipleNicknameOptions extends NicknameOptions {
+  /** 이번 호출의 결과 안에서 닉네임 중복 방지 (기본값: true) */
+  unique?: boolean;
 }
 
 /**
@@ -59,13 +64,13 @@ function getRandomElement<T>(array: T[], random: SeededRandom): T {
  * ```typescript
  * import { generateNickname } from 'starving-orange';
  *
- * 1. 기본 사용법 (띄어쓰기 있음)
+ * 1. 기본 사용법 (띄어쓰기 없음)
  * const result = generateNickname();
- * console.log(result.nickname); // "배고픈 귤"
+ * console.log(result.nickname); // "배고픈귤"
  *
- * 2. 띄어쓰기 없는 닉네임
- * const noSpaceResult = generateNickname({ noSpacing: true });
- * console.log(noSpaceResult.nickname); // "배고픈귤"
+ * 2. 띄어쓰기 있는 닉네임
+ * const spaceResult = generateNickname({ noSpacing: false });
+ * console.log(spaceResult.nickname); // "배고픈 귤"
  *
  * 3. 커스텀 옵션 사용
  * const customResult = generateNickname({
@@ -77,13 +82,13 @@ function getRandomElement<T>(array: T[], random: SeededRandom): T {
  * ```
  */
 export function generateNickname(
-  options: NicknameOptions = {}
+  options: NicknameOptions = {},
 ): GenerateResult {
   const {
     customAdjectives = adjectives,
     customNouns = nouns,
     seed,
-    noSpacing = false,
+    noSpacing = true,
   } = options;
 
   if (customAdjectives.length === 0) {
@@ -126,23 +131,65 @@ export function generateNickname(
  */
 export function generateMultipleNicknames(
   count: number,
-  options: NicknameOptions = {}
+  options: MultipleNicknameOptions = {},
 ): GenerateResult[] {
   if (count <= 0) {
     throw new Error("개수는 1 이상이어야 합니다.");
+  }
+
+  if (!Number.isSafeInteger(count)) {
+    throw new Error("개수는 유한한 안전 정수여야 합니다.");
+  }
+
+  if (options.unique ?? true) {
+    const {
+      customAdjectives = adjectives,
+      customNouns = nouns,
+      noSpacing = true,
+      seed,
+    } = options;
+
+    if (customAdjectives.length === 0) {
+      throw new Error("형용사 배열이 비어있습니다.");
+    }
+    if (customNouns.length === 0) {
+      throw new Error("명사 배열이 비어있습니다.");
+    }
+
+    const candidates = new Map<string, GenerateResult>();
+    const separator = noSpacing ? "" : " ";
+    for (const adjective of new Set(customAdjectives)) {
+      for (const noun of new Set(customNouns)) {
+        const nickname = `${adjective}${separator}${noun}`;
+        candidates.set(nickname, { nickname, adjective, noun });
+      }
+    }
+
+    if (count > candidates.size) {
+      throw new Error(`중복 없이 생성 가능한 닉네임은 최대 ${candidates.size}개입니다.`);
+    }
+
+    const pool = [...candidates.values()];
+    const random = new SeededRandom(seed);
+    // 앞에서부터 무작위로 선택해 교환하므로 재시도 없이 중복을 방지합니다.
+    for (let i = 0; i < count; i++) {
+      const index = i + Math.floor(random.next() * (pool.length - i));
+      [pool[i], pool[index]] = [pool[index], pool[i]];
+    }
+    return pool.slice(0, count);
   }
 
   const results: GenerateResult[] = [];
 
   for (let i = 0; i < count; i++) {
     // 각 닉네임마다 다른 시드 사용 (옵션에 시드가 지정된 경우 기반으로)
-    const seedForThisNickname = options.seed ? options.seed + i : undefined;
+    const seedForThisNickname = options.seed !== undefined ? options.seed + i : undefined;
 
     results.push(
       generateNickname({
         ...options,
         seed: seedForThisNickname,
-      })
+      }),
     );
   }
 
